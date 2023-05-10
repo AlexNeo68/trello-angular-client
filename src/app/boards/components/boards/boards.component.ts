@@ -13,7 +13,6 @@ export class BoardsComponent implements OnInit, OnDestroy {
 
   boards: BoardInterface[] = [];
   boardsSubscription: Subscription;
-  boardsCreateSubscription: Subscription;
   ngOnInit(): void {
     this.boardsSubscription = this.boardsService
       .getBoards()
@@ -24,14 +23,11 @@ export class BoardsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.boardsSubscription.unsubscribe();
-    this.boardsCreateSubscription.unsubscribe();
   }
 
   createBoard(title: string): void {
-    this.boardsCreateSubscription = this.boardsService
-      .createBoard(title)
-      .subscribe((board: BoardInterface) => {
-        this.boards.push(board);
-      });
+    this.boardsService.createBoard(title).subscribe((board: BoardInterface) => {
+      this.boards.push(board);
+    });
   }
 }

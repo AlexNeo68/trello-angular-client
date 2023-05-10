@@ -44,4 +44,9 @@ export class AuthService {
   setToken(token: string): void {
     localStorage.setItem('accessToken', token);
   }
+
+  logout(): void {
+    localStorage.removeItem('accessToken');
+    this.setCurrentUser(null);
+  }
 }
