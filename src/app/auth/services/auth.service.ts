@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, filter, map } from 'rxjs';
 import { CurrentUserInterface } from 'src/app/auth/types/current-user.interface';
 import { LoginRequestInterface } from 'src/app/auth/types/login-request.interface';
 import { RegisterRequestInterface } from 'src/app/auth/types/register-request.interface';
-import { environment } from 'src/environments/environment';
+import { generateApiUrl } from 'src/app/shared/utils/utils';
 
 @Injectable()
 export class AuthService {
@@ -19,12 +19,8 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) {}
 
-  generateUrl(url: string): string {
-    return `${environment.apiUrl}/${url}`;
-  }
-
   getCurrentUser(): Observable<CurrentUserInterface> {
-    return this.httpClient.get<CurrentUserInterface>(this.generateUrl('user'));
+    return this.httpClient.get<CurrentUserInterface>(generateApiUrl('user'));
   }
 
   setCurrentUser(currentUser: CurrentUserInterface | null): void {
@@ -33,14 +29,14 @@ export class AuthService {
 
   register(data: RegisterRequestInterface): Observable<CurrentUserInterface> {
     return this.httpClient.post<CurrentUserInterface>(
-      this.generateUrl('users'),
+      generateApiUrl('users'),
       data
     );
   }
 
   login(data: LoginRequestInterface): Observable<CurrentUserInterface> {
     return this.httpClient.post<CurrentUserInterface>(
-      this.generateUrl('users/login'),
+      generateApiUrl('users/login'),
       data
     );
   }
