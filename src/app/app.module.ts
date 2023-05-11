@@ -8,6 +8,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { HomeModule } from 'src/app/home/home.module';
 import { AuthInterceptor } from 'src/app/auth/interceptors/auth.interceptor';
 import { BoardsModule } from 'src/app/boards/boards.module';
+import { BoardModule } from 'src/app/board/board.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,6 +19,7 @@ import { BoardsModule } from 'src/app/boards/boards.module';
     HttpClientModule,
     HomeModule,
     BoardsModule,
+    BoardModule,
   ],
   providers: [
     {

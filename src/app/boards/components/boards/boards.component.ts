@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, map } from 'rxjs';
-import { BoardService } from 'src/app/shared/services/board.service';
+import { BoardsService } from 'src/app/shared/services/boards.service';
 import { BoardInterface } from 'src/app/shared/types/board.interface';
 
 @Component({
@@ -9,7 +9,7 @@ import { BoardInterface } from 'src/app/shared/types/board.interface';
   styleUrls: ['./boards.component.scss'],
 })
 export class BoardsComponent implements OnInit, OnDestroy {
-  constructor(private boardsService: BoardService) {}
+  constructor(private boardsService: BoardsService) {}
 
   boards: BoardInterface[] = [];
   boardsSubscription: Subscription;
