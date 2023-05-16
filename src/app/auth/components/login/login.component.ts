@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { CurrentUserInterface } from 'src/app/auth/types/current-user.interface';
+import { SocketService } from 'src/app/shared/services/socket.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private socketService: SocketService
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +33,7 @@ export class LoginComponent implements OnInit {
       next: (currentUser: CurrentUserInterface) => {
         this.authService.setCurrentUser(currentUser);
         this.authService.setToken(currentUser.token);
+        this.socketService.setupSocketConnection(currentUser);
         this.errorMessage = null;
         this.router.navigateByUrl('/');
       },

@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, filter, map } from 'rxjs';
 import { CurrentUserInterface } from 'src/app/auth/types/current-user.interface';
 import { LoginRequestInterface } from 'src/app/auth/types/login-request.interface';
 import { RegisterRequestInterface } from 'src/app/auth/types/register-request.interface';
+import { SocketService } from 'src/app/shared/services/socket.service';
 import { generateApiUrl } from 'src/app/shared/utils/utils';
 
 @Injectable()
@@ -17,7 +18,10 @@ export class AuthService {
     map(Boolean)
   );
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private socketService: SocketService
+  ) {}
 
   getCurrentUser(): Observable<CurrentUserInterface> {
     return this.httpClient.get<CurrentUserInterface>(generateApiUrl('user'));
@@ -48,5 +52,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('accessToken');
     this.setCurrentUser(null);
+    this.socketService.disconnect();
   }
 }

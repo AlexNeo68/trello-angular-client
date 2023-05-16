@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import { SocketService } from 'src/app/shared/services/socket.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private socketService: SocketService
   ) {}
   form: FormGroup;
   errorMessage: string | null;
@@ -35,6 +37,7 @@ export class RegisterComponent implements OnInit {
       next: (currentUser) => {
         this.authService.setCurrentUser(currentUser);
         this.authService.setToken(currentUser.token);
+        this.socketService.setupSocketConnection(currentUser);
         this.errorMessage = null;
         this.router.navigateByUrl('/');
       },
