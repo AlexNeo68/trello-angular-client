@@ -5,10 +5,12 @@ import { BoardRoutingModule } from './board-routing.module';
 import { BoardComponent } from './components/board/board.component';
 import { BoardService } from 'src/app/board/services/board.service';
 import { BoardsService } from 'src/app/shared/services/boards.service';
+import { ColumnsService } from 'src/app/shared/services/columns.service';
+import { TopbarModule } from 'src/app/shared/modules/topbar/topbar.module';
 
 @NgModule({
   declarations: [BoardComponent],
-  imports: [CommonModule, BoardRoutingModule],
-  providers: [BoardService, BoardsService],
+  imports: [CommonModule, BoardRoutingModule, TopbarModule],
+  providers: [BoardService, BoardsService, ColumnsService],
 })
 export class BoardModule {}

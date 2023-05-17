@@ -5,11 +5,20 @@ import {
   Params,
   Router,
 } from '@angular/router';
-import { Observable, Subscription, filter, throwError } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  filter,
+  map,
+  throwError,
+} from 'rxjs';
 import { BoardService } from 'src/app/board/services/board.service';
 import { BoardsService } from 'src/app/shared/services/boards.service';
+import { ColumnsService } from 'src/app/shared/services/columns.service';
 import { SocketService } from 'src/app/shared/services/socket.service';
 import { BoardInterface } from 'src/app/shared/types/board.interface';
+import { ColumnInterface } from 'src/app/shared/types/column.interface';
 import { SocketEventName } from 'src/app/shared/types/socket-event-name.enum';
 
 @Component({
@@ -18,15 +27,19 @@ import { SocketEventName } from 'src/app/shared/types/socket-event-name.enum';
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent implements OnInit, OnDestroy {
-  board$: Observable<BoardInterface>;
   boardId: string;
   boardIdSubscription: Subscription;
+  data$: Observable<{
+    board: BoardInterface;
+    columns: ColumnInterface[];
+  }>;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private boardsService: BoardsService,
     private boardService: BoardService,
+    private columnService: ColumnsService,
     private socketService: SocketService
   ) {
     this.boardIdSubscription = this.route.params.subscribe((params: Params) => {
@@ -34,7 +47,11 @@ export class BoardComponent implements OnInit, OnDestroy {
 
       if (!boardId) throw new Error('Board id is not defined!');
       this.boardId = boardId;
-      this.board$ = this.boardService.board$.pipe(filter(Boolean));
+
+      this.data$ = combineLatest(
+        this.boardService.board$.pipe(filter(Boolean)),
+        this.boardService.columns$
+      ).pipe(map(([board, columns]) => ({ board, columns })));
     });
   }
 
@@ -63,6 +80,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       .getBoard(this.boardId)
       .subscribe((board: BoardInterface) => {
         this.boardService.setBoard(board);
+      });
+    this.columnService
+      .getColumns(this.boardId)
+      .subscribe((columns: ColumnInterface[]) => {
+        this.boardService.setColumns(columns);
       });
   }
 
