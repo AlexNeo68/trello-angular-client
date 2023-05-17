@@ -14,6 +14,7 @@ import {
   throwError,
 } from 'rxjs';
 import { BoardService } from 'src/app/board/services/board.service';
+import { ColumnCreateRequestInterface } from 'src/app/board/types/column-create-request.interface';
 import { BoardsService } from 'src/app/shared/services/boards.service';
 import { ColumnsService } from 'src/app/shared/services/columns.service';
 import { SocketService } from 'src/app/shared/services/socket.service';
@@ -93,5 +94,13 @@ export class BoardComponent implements OnInit, OnDestroy {
       title: 'Title Column',
       boardId: this.boardId,
     });
+  }
+
+  createColumn(title: string): void {
+    const newColumn: ColumnCreateRequestInterface = {
+      title,
+      boardId: this.boardId,
+    };
+    this.columnService.createColumn(newColumn);
   }
 }

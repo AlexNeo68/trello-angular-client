@@ -2,9 +2,17 @@
 <div class="board" *ngIf="data$ | async as data">
   <div class="board-header-container">INLINE BOARD FORM FOR EDIT</div>
   <div class="columns">
-    <div class="column" *ngFor="let column of data.columns">
-      <div class="column-header">{{ column.title }}</div>
+    <div class="columns-list">
+      <div class="column" *ngFor="let column of data.columns">
+        <div class="column-header">{{ column.title }}</div>
+      </div>
     </div>
-    INLINE FORM FOR CREATING COLUMN
+
+    <app-inline-form
+      defaultText="Create New Column"
+      (handleSubmit)="createColumn($event)"
+      [hasButton]="true"
+      buttonText="Add"
+    ></app-inline-form>
   </div>
 </div>
