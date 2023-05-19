@@ -11,17 +11,17 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private socketService: SocketService
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.authService.getCurrentUser().subscribe({
       next: (currentUser: CurrentUserInterface) => {
-        this.authService.setCurrentUser(currentUser);
         this.socketService.setupSocketConnection(currentUser);
+        this.authService.setCurrentUser(currentUser);
       },
       error: (err) => {
         this.authService.setCurrentUser(null);
       },
     });
   }
+
+  ngOnInit(): void {}
 }

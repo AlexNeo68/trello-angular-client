@@ -4,7 +4,21 @@
   <div class="columns">
     <div class="columns-list">
       <div class="column" *ngFor="let column of data.columns">
-        <div class="column-header">{{ column.title }}</div>
+        <div class="column-title">{{ column.title }}</div>
+        <ng-container *ngIf="data.tasks">
+          <div
+            class="task"
+            *ngFor="let task of getColumnTasks(column.id, data.tasks)"
+          >
+            {{ task.title }}
+          </div>
+          <app-inline-form
+            defaultText="Create New Task"
+            (handleSubmit)="createTask($event, column.id)"
+            [hasButton]="true"
+            buttonText="Add Task"
+          ></app-inline-form>
+        </ng-container>
       </div>
     </div>
 

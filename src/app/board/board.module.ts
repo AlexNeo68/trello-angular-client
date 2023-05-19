@@ -8,10 +8,18 @@ import { BoardsService } from 'src/app/shared/services/boards.service';
 import { ColumnsService } from 'src/app/shared/services/columns.service';
 import { TopbarModule } from 'src/app/shared/modules/topbar/topbar.module';
 import { InlineFormModule } from 'src/app/shared/modules/inline-form/inline-form.module';
+import { TasksService } from 'src/app/shared/services/tasks.service';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @NgModule({
   declarations: [BoardComponent],
   imports: [CommonModule, BoardRoutingModule, TopbarModule, InlineFormModule],
-  providers: [BoardService, BoardsService, ColumnsService],
+  providers: [
+    BoardService,
+    BoardsService,
+    ColumnsService,
+    TasksService,
+    AuthService,
+  ],
 })
 export class BoardModule {}

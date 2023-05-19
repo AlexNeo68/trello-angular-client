@@ -13,14 +13,19 @@ import {
   map,
   throwError,
 } from 'rxjs';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { CurrentUserInterface } from 'src/app/auth/types/current-user.interface';
 import { BoardService } from 'src/app/board/services/board.service';
 import { ColumnCreateRequestInterface } from 'src/app/board/types/column-create-request.interface';
+import { TaskCreateRequestInterface } from 'src/app/board/types/task-create-request.interface';
 import { BoardsService } from 'src/app/shared/services/boards.service';
 import { ColumnsService } from 'src/app/shared/services/columns.service';
 import { SocketService } from 'src/app/shared/services/socket.service';
+import { TasksService } from 'src/app/shared/services/tasks.service';
 import { BoardInterface } from 'src/app/shared/types/board.interface';
 import { ColumnInterface } from 'src/app/shared/types/column.interface';
 import { SocketEventName } from 'src/app/shared/types/socket-event-name.enum';
+import { TaskInterface } from 'src/app/shared/types/task.interface';
 
 @Component({
   selector: 'app-board',
@@ -33,6 +38,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   data$: Observable<{
     board: BoardInterface;
     columns: ColumnInterface[];
+    tasks: TaskInterface[];
   }>;
 
   constructor(
@@ -41,7 +47,9 @@ export class BoardComponent implements OnInit, OnDestroy {
     private boardsService: BoardsService,
     private boardService: BoardService,
     private columnService: ColumnsService,
-    private socketService: SocketService
+    private tasksService: TasksService,
+    private socketService: SocketService,
+    private authService: AuthService
   ) {
     this.boardIdSubscription = this.route.params.subscribe((params: Params) => {
       const boardId = params['boardId'];
@@ -51,8 +59,9 @@ export class BoardComponent implements OnInit, OnDestroy {
 
       this.data$ = combineLatest(
         this.boardService.board$.pipe(filter(Boolean)),
-        this.boardService.columns$
-      ).pipe(map(([board, columns]) => ({ board, columns })));
+        this.boardService.columns$,
+        this.boardService.tasks$
+      ).pipe(map(([board, columns, tasks]) => ({ board, columns, tasks })));
     });
   }
 
@@ -61,12 +70,18 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.socketService.emit(SocketEventName.boardsJoin, {
-      boardId: this.boardId,
-    });
+    this.authService.currentUser$.subscribe(
+      (currentUser: CurrentUserInterface) => {
+        if (currentUser) {
+          this.fetchData();
+          this.socketService.emit(SocketEventName.boardsJoin, {
+            boardId: this.boardId,
+          });
 
-    this.fetchData();
-    this.initializeListener();
+          this.initializeListener();
+        }
+      }
+    );
   }
   initializeListener(): void {
     this.router.events.subscribe((event) => {
@@ -74,6 +89,16 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.boardService.leaveBoard(this.boardId);
       }
     });
+    this.socketService
+      .listen<ColumnInterface>(SocketEventName.columnsCreateSuccess)
+      .subscribe((column) => {
+        this.boardService.addColumn(column);
+      });
+    this.socketService
+      .listen<TaskInterface>(SocketEventName.tasksCreateSuccess)
+      .subscribe((task) => {
+        this.boardService.addTask(task);
+      });
   }
 
   fetchData(): void {
@@ -86,6 +111,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       .getColumns(this.boardId)
       .subscribe((columns: ColumnInterface[]) => {
         this.boardService.setColumns(columns);
+      });
+    this.tasksService
+      .getTasks(this.boardId)
+      .subscribe((tasks: TaskInterface[]) => {
+        this.boardService.setTasks(tasks);
       });
   }
 
@@ -102,5 +132,22 @@ export class BoardComponent implements OnInit, OnDestroy {
       boardId: this.boardId,
     };
     this.columnService.createColumn(newColumn);
+  }
+  getColumnTasks(
+    columnId: string,
+    tasks: TaskInterface[]
+  ): TaskInterface[] | [] {
+    // return tasks.filter((task) => task.columndId == columnId);
+    return tasks;
+  }
+
+  createTask(title: string, columnId: string) {
+    console.log('createTask', title, columnId);
+    const newTask: TaskCreateRequestInterface = {
+      title,
+      columnId,
+      boardId: this.boardId,
+    };
+    this.tasksService.createTask(newTask);
   }
 }
