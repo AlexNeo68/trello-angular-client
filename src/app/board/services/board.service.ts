@@ -40,4 +40,11 @@ export class BoardService {
     const updatedTasks = [...this.tasks$.getValue(), task];
     this.tasks$.next(updatedTasks);
   }
+
+  updateBoard(updatedBoard: BoardInterface): void {
+    const board = this.board$.getValue();
+    if (board) {
+      this.board$.next({ ...board, title: updatedBoard.title });
+    }
+  }
 }

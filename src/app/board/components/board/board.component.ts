@@ -99,6 +99,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       .subscribe((task) => {
         this.boardService.addTask(task);
       });
+    this.socketService
+      .listen<BoardInterface>(SocketEventName.boardsUpdateSuccess)
+      .subscribe((board) => {
+        this.boardService.updateBoard(board);
+      });
   }
 
   fetchData(): void {
@@ -149,5 +154,9 @@ export class BoardComponent implements OnInit, OnDestroy {
       boardId: this.boardId,
     };
     this.tasksService.createTask(newTask);
+  }
+
+  updateBoardTitle(boardTitle: string): void {
+    this.boardsService.updateBoardTitle(this.boardId, { title: boardTitle });
   }
 }
