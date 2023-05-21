@@ -7,11 +7,20 @@
       [title]="data.board.title"
       (handleSubmit)="updateBoardTitle($event)"
     ></app-inline-form>
+    <button (click)="deleteBoard()">Delete Board</button>
   </div>
   <div class="columns">
     <div class="columns-list">
       <div class="column" *ngFor="let column of data.columns">
-        <div class="column-title">{{ column.title }}</div>
+        <div class="column-title">
+          {{ column.title }}
+          <img
+            class="column-delete-icon"
+            src="assets/close_icon.svg"
+            (click)="deleteColumn(column.id)"
+            alt=""
+          />
+        </div>
         <ng-container *ngIf="data.tasks">
           <div
             class="task"

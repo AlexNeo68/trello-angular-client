@@ -104,6 +104,16 @@ export class BoardComponent implements OnInit, OnDestroy {
       .subscribe((board) => {
         this.boardService.updateBoard(board);
       });
+    this.socketService
+      .listen<void>(SocketEventName.boardsDeleteSuccess)
+      .subscribe(() => {
+        this.router.navigateByUrl('/boards');
+      });
+    this.socketService
+      .listen<string>(SocketEventName.columnsDeleteSuccess)
+      .subscribe((columndId) => {
+        this.boardService.deleteColumn(columndId);
+      });
   }
 
   fetchData(): void {
@@ -158,5 +168,13 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   updateBoardTitle(boardTitle: string): void {
     this.boardsService.updateBoardTitle(this.boardId, { title: boardTitle });
+  }
+
+  deleteBoard(): void {
+    this.boardsService.deleteBoard(this.boardId);
+  }
+
+  deleteColumn(columnId: string): void {
+    this.columnService.deleteColumn(this.boardId, columnId);
   }
 }

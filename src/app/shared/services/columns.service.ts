@@ -22,4 +22,11 @@ export class ColumnsService {
   createColumn(newColumn: ColumnCreateRequestInterface): void {
     this.socketService.emit(SocketEventName.columnsCreate, newColumn);
   }
+
+  deleteColumn(boardId: string, columnId: string): void {
+    this.socketService.emit(SocketEventName.columnsDelete, {
+      boardId,
+      columnId,
+    });
+  }
 }
