@@ -23,6 +23,18 @@ export class ColumnsService {
     this.socketService.emit(SocketEventName.columnsCreate, newColumn);
   }
 
+  updateColumnTitle(
+    boardId: string,
+    columnId: string,
+    fields: { title: string }
+  ): void {
+    this.socketService.emit(SocketEventName.columnsUpdate, {
+      boardId,
+      columnId,
+      fields,
+    });
+  }
+
   deleteColumn(boardId: string, columnId: string): void {
     this.socketService.emit(SocketEventName.columnsDelete, {
       boardId,

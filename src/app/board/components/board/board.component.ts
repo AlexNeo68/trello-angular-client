@@ -105,6 +105,11 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.boardService.updateBoard(board);
       });
     this.socketService
+      .listen<ColumnInterface>(SocketEventName.columnsUpdateSuccess)
+      .subscribe((updatedColumn) => {
+        this.boardService.updateColumns(updatedColumn);
+      });
+    this.socketService
       .listen<void>(SocketEventName.boardsDeleteSuccess)
       .subscribe(() => {
         this.router.navigateByUrl('/boards');
@@ -168,6 +173,12 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   updateBoardTitle(boardTitle: string): void {
     this.boardsService.updateBoardTitle(this.boardId, { title: boardTitle });
+  }
+
+  updateColumnTitle(columnTitle: string, columnId: string): void {
+    this.columnService.updateColumnTitle(this.boardId, columnId, {
+      title: columnTitle,
+    });
   }
 
   deleteBoard(): void {
