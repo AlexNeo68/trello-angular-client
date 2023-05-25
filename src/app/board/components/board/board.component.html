@@ -30,6 +30,7 @@
           <div
             class="task"
             *ngFor="let task of getColumnTasks(column.id, data.tasks)"
+            (click)="openTask(task.id)"
           >
             {{ task.title }}
           </div>
@@ -51,3 +52,4 @@
     ></app-inline-form>
   </div>
 </div>
+<router-outlet></router-outlet>

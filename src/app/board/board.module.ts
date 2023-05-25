@@ -10,10 +10,18 @@ import { TopbarModule } from 'src/app/shared/modules/topbar/topbar.module';
 import { InlineFormModule } from 'src/app/shared/modules/inline-form/inline-form.module';
 import { TasksService } from 'src/app/shared/services/tasks.service';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import { TaskModalComponent } from './components/task-modal/task-modal.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [BoardComponent],
-  imports: [CommonModule, BoardRoutingModule, TopbarModule, InlineFormModule],
+  declarations: [BoardComponent, TaskModalComponent],
+  imports: [
+    CommonModule,
+    BoardRoutingModule,
+    TopbarModule,
+    InlineFormModule,
+    ReactiveFormsModule,
+  ],
   providers: [
     BoardService,
     BoardsService,
